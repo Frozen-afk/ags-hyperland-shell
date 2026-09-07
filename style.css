@@ -1,0 +1,547 @@
+/* ===========================================================
+   AGS v2 / Astal shell — GNOME Dark palette
+   Base: #1e1e1e   Surface: #2a2a2a   Accent: #3584e4
+   =========================================================== */
+
+* {
+  font-family: "Adwaita Sans", "Cantarell", sans-serif;
+  font-size: 13px;
+  color: #e3e3e3;
+}
+
+/* ---------- Bar ---------- */
+.bar {
+  background: transparent;
+}
+
+.bar-content {
+  background-color: rgba(30, 30, 30, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 4px 10px;
+  min-height: 34px;
+}
+
+.bar-pill {
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  padding: 4px 10px;
+}
+
+.bar-pill:hover {
+  background-color: #333333;
+}
+
+/* ---------- Workspaces ---------- */
+.workspaces {
+  padding: 2px;
+}
+
+.workspace-btn {
+  min-width: 22px;
+  min-height: 22px;
+  border-radius: 8px;
+  background-color: transparent;
+  padding: 0 4px;
+  transition: background-color 120ms ease;
+}
+
+.workspace-btn.occupied {
+  background-color: #3a3a3a;
+}
+
+.workspace-btn.active {
+  background-color: #3584e4;
+  color: #ffffff;
+}
+
+.workspace-btn.empty {
+  opacity: 0.45;
+}
+
+/* ---------- Focused client ---------- */
+.focused-client label {
+  color: #cfcfcf;
+}
+
+/* ---------- Tray ---------- */
+.systray {
+  padding: 0 4px;
+}
+
+.tray-item {
+  background-color: transparent;
+  border-radius: 8px;
+  padding: 2px 4px;
+}
+
+.tray-item:hover {
+  background-color: #333333;
+}
+
+/* ---------- Audio / brightness popover ---------- */
+.av-popover {
+  padding: 12px;
+  min-width: 260px;
+}
+
+.av-section {
+  padding: 4px 0;
+}
+
+.av-label {
+  color: #9a9a9a;
+  font-size: 11px;
+}
+
+.av-device-select {
+  background-color: #333333;
+  border-radius: 8px;
+  padding: 2px 8px;
+}
+
+/* ---------- System indicators ---------- */
+.system-indicators {
+  padding: 4px 10px;
+}
+
+.indicator {
+  padding: 0 4px;
+}
+
+.lock-badge {
+  background-color: #e5a50a;
+  color: #1e1e1e;
+  border-radius: 4px;
+  padding: 0 4px;
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.net-popover,
+.bt-popover {
+  padding: 10px;
+  min-width: 220px;
+}
+
+.net-title {
+  font-weight: 600;
+  padding-bottom: 4px;
+}
+
+.dim {
+  color: #8a8a8a;
+  font-size: 11px;
+}
+
+/* ---------- Media bar ---------- */
+.media-bar {
+  padding: 2px 10px;
+}
+
+.media-player {
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  padding: 4px 10px;
+}
+
+.media-art {
+  min-width: 24px;
+  min-height: 24px;
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+}
+
+.media-title {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.media-artist {
+  color: #9a9a9a;
+  font-size: 11px;
+}
+
+.media-time {
+  color: #9a9a9a;
+  font-size: 11px;
+  padding-left: 6px;
+}
+
+/* ---------- Clock ---------- */
+.clock-menu label {
+  font-weight: 600;
+}
+
+.clock-popover {
+  padding: 12px;
+}
+
+.clock-date {
+  color: #9a9a9a;
+  font-size: 12px;
+}
+
+/* ---------- Launcher ---------- */
+.launcher-window {
+  background: transparent;
+}
+
+.launcher {
+  background-color: rgba(30, 30, 30, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 12px;
+  min-width: 560px;
+}
+
+.launcher entry {
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 15px;
+}
+
+.launcher-results {
+  margin-top: 8px;
+}
+
+.launcher-item {
+  background-color: transparent;
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+
+.launcher-item.selected,
+.launcher-item:hover {
+  background-color: #3584e4;
+}
+
+.launcher-item-name {
+  font-weight: 600;
+}
+
+.launcher-item-desc {
+  color: #b0b0b0;
+  font-size: 11px;
+}
+
+/* ---------- Clipboard ---------- */
+.clipboard {
+  background-color: rgba(30, 30, 30, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 12px;
+  min-width: 480px;
+}
+
+.clipboard-list {
+  margin-top: 6px;
+}
+
+.clip-entry {
+  border-radius: 8px;
+}
+
+.clip-entry button {
+  background-color: transparent;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.clip-entry button:hover {
+  background-color: #333333;
+}
+
+.clip-clear,
+.clip-delete {
+  background-color: transparent;
+  color: #e05252;
+}
+
+/* ---------- Notifications ---------- */
+.notification-popups {
+  background: transparent;
+}
+
+.notification {
+  background-color: rgba(30, 30, 30, 0.96);
+  border-radius: 12px;
+  padding: 10px 12px;
+  min-width: 340px;
+  border-left: 3px solid #3584e4;
+}
+
+.notification.urgency-critical {
+  border-left-color: #e05252;
+}
+
+.notification.urgency-low {
+  border-left-color: #6a6a6a;
+}
+
+.notif-summary {
+  font-weight: 700;
+}
+
+.notif-body {
+  color: #c8c8c8;
+  font-size: 12px;
+}
+
+.notif-close {
+  background-color: transparent;
+  border-radius: 6px;
+}
+
+.notif-actions button {
+  background-color: #333333;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+/* ---------- Power menu ---------- */
+.power-menu-window {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.power-menu {
+  padding: 40px;
+}
+
+.power-btn {
+  background-color: #2a2a2a;
+  border-radius: 16px;
+  padding: 20px;
+  min-width: 90px;
+}
+
+.power-btn:hover {
+  background-color: #3584e4;
+}
+
+.power-confirm-label {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.power-confirm-yes {
+  background-color: #e05252;
+  border-radius: 10px;
+  padding: 8px 20px;
+}
+
+.power-confirm-no {
+  background-color: #3a3a3a;
+  border-radius: 10px;
+  padding: 8px 20px;
+}
+
+/* ---------- Screenshot menu ---------- */
+.screenshot-window {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.screenshot-menu {
+  background-color: rgba(30, 30, 30, 0.96);
+  border-radius: 16px;
+  padding: 16px;
+  min-width: 260px;
+}
+
+.screenshot-title {
+  font-weight: 700;
+  padding-bottom: 6px;
+}
+
+.screenshot-btn {
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.screenshot-btn:hover {
+  background-color: #3584e4;
+}
+
+/* ---------- Vitals ---------- */
+.vitals-popover {
+  padding: 12px;
+  min-width: 220px;
+}
+
+.vitals-label {
+  color: #9a9a9a;
+  font-size: 11px;
+}
+
+levelbar block.filled {
+  background-color: #3584e4;
+  border-radius: 4px;
+}
+
+levelbar block.empty {
+  background-color: #3a3a3a;
+  border-radius: 4px;
+}
+
+/* ---------- Draw toggle ---------- */
+.draw-toggle {
+  background-color: #e5a50a;
+  color: #1e1e1e;
+  border-radius: 10px;
+  padding: 4px 10px;
+}
+
+.draw-toggle button {
+  background-color: transparent;
+}
+
+/* ---------- Dock ---------- */
+.dock-window {
+  background: transparent;
+}
+
+.dock-hotspot {
+  background: transparent;
+}
+
+.dock {
+  background-color: rgba(30, 30, 30, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+}
+
+.dock-item {
+  background-color: transparent;
+  border-radius: 12px;
+  padding: 6px;
+}
+
+.dock-item:hover {
+  background-color: #333333;
+}
+
+.dock-item.focused {
+  background-color: #3584e4;
+}
+
+.dock-indicator {
+  min-width: 4px;
+  min-height: 4px;
+  border-radius: 2px;
+  background-color: #e3e3e3;
+  margin-top: 2px;
+}
+
+/* ---------- Special workspace (scratchpad) badge ---------- */
+.special-ws {
+  background-color: rgba(229, 165, 10, 0.18);
+  color: #e5a50a;
+}
+
+.special-ws:hover {
+  background-color: rgba(229, 165, 10, 0.3);
+}
+
+/* ---------- OSD (on-screen display) ---------- */
+.osd-window {
+  background: transparent;
+}
+
+.osd-container {
+  background-color: rgba(30, 30, 30, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 12px 20px;
+  min-width: 260px;
+}
+
+.osd-levelbar block.filled {
+  background-color: #3584e4;
+  border-radius: 4px;
+}
+
+.osd-levelbar block.empty {
+  background-color: #3a3a3a;
+  border-radius: 4px;
+}
+
+/* ---------- Quick Settings ---------- */
+.quicksettings-window {
+  background: transparent;
+}
+
+.quicksettings-trigger {
+  background-color: transparent;
+  border-radius: 8px;
+  padding: 0 4px;
+}
+
+.quicksettings-trigger:hover {
+  background-color: #333333;
+}
+
+.quicksettings-menu {
+  min-width: 300px;
+  padding: 16px;
+  border-radius: 16px;
+  background-color: rgba(30, 30, 30, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.qs-tile {
+  background-color: #2a2a2a;
+  border-radius: 12px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+}
+
+.qs-tile:hover {
+  background-color: #333333;
+}
+
+.qs-tile.active {
+  background-color: #3584e4;
+  color: #ffffff;
+}
+
+.qs-sliders {
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- Wallpaper picker ---------- */
+.wallpaper-window {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.wallpaper-menu {
+  background-color: rgba(30, 30, 30, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  min-width: 380px;
+}
+
+.wallpaper-menu .menu-title {
+  font-weight: 700;
+  padding-bottom: 4px;
+}
+
+.wallpaper-scroll {
+  max-height: 420px;
+}
+
+.wallpaper-card {
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.wallpaper-card:hover {
+  background-color: rgba(53, 132, 228, 0.25);
+}

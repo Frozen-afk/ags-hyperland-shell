@@ -1,0 +1,9 @@
+{
+  "name": "ags-hyprland-shell",
+  "version": "1.0.0",
+  "description": "AGS v2 (Astal) desktop shell for Hyprland on Fedora",
+  "type": "module",
+  "dependencies": {
+    "astal": "^0.1.0"
+  }
+}
