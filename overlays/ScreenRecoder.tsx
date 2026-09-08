@@ -31,6 +31,14 @@ export default function ScreenRecorder(monitor: Gdk.Monitor) {
     },
   );
 
+  // GTK4's CSS engine doesn't support @keyframes/animation, so the dot's
+  // pulse is driven here: toggle a class on a fixed interval while recording.
+  let pulseFlag = true;
+  const pulseOn = Variable(true).poll(600, () => {
+    pulseFlag = !pulseFlag;
+    return pulseFlag;
+  });
+
   function stop() {
     bashAsync("pkill -INT wf-recorder");
   }
@@ -48,7 +56,7 @@ export default function ScreenRecorder(monitor: Gdk.Monitor) {
       visible={bind(state).as((s) => s.active)}
     >
       <box cssClasses={["recording-pill"]} spacing={8}>
-        <box cssClasses={["pulse-dot"]} />
+        <box cssClasses={bind(pulseOn).as((on) => ["pulse-dot", on ? "pulse-on" : ""])} />
         <label label={bind(state).as((s) => `Recording ${fmtDuration(s.elapsed)}`)} />
         <button cssClasses={["recorder-stop"]} onClicked={stop}>
           <icon icon="media-playback-stop-symbolic" />

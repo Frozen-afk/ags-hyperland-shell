@@ -612,3 +612,66 @@ levelbar block.empty {
 .recorder-stop:hover {
   background-color: rgba(224, 82, 82, 0.15);
 }
+
+/* ---------- Vitals: thermal warning state ---------- */
+.vitals.vitals-hot {
+  background-color: rgba(224, 82, 82, 0.18);
+}
+
+.vitals.vitals-hot:hover {
+  background-color: rgba(224, 82, 82, 0.28);
+}
+
+.vitals-hot-text {
+  color: #e05252;
+  font-weight: 700;
+}
+
+/* ---------- Notifications: countdown progress ---------- */
+.notif-progress {
+  min-height: 3px;
+  margin-top: 2px;
+}
+
+.notif-progress block.filled {
+  background-color: #3584e4;
+  border-radius: 2px;
+}
+
+.notif-progress block.empty {
+  background-color: transparent;
+}
+
+.notification.urgency-critical .notif-progress block.filled {
+  background-color: #e05252;
+}
+
+/* ---------- Clipboard: image thumbnails ---------- */
+.clip-thumb {
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+  background-color: #1a1a1a;
+}
+
+/* ---------- Overview: active workspace highlight ---------- */
+.workspace-card.active {
+  border-color: rgba(53, 132, 228, 0.6);
+  background-color: rgba(53, 132, 228, 0.08);
+}
+
+/* ---------- Screen recorder: JS-driven pulse ---------- */
+.pulse-dot {
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 5px;
+  background-color: #e05252;
+  opacity: 0.4;
+  transition: opacity 300ms ease;
+}
+
+.pulse-dot.pulse-on {
+  opacity: 1;
+}

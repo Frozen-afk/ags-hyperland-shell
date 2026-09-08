@@ -86,6 +86,12 @@ export default function Dock(monitor: Gdk.Monitor) {
     }
   }
 
+  /** Middle-click always launches a fresh instance, even if one is already running. */
+  function launchNewInstance(entry: DockEntry) {
+    const app = apps.fuzzy_query(entry.appId)[0];
+    app?.launch();
+  }
+
   return (
     <window
       name="dock"
@@ -139,6 +145,12 @@ export default function Dock(monitor: Gdk.Monitor) {
                   ]}
                   tooltipText={entry.name}
                   onClicked={() => activateOrLaunch(entry)}
+                  setup={(self) => {
+                    const middleClick = new Gtk.GestureClick();
+                    middleClick.set_button(2);
+                    middleClick.connect("pressed", () => launchNewInstance(entry));
+                    self.add_controller(middleClick);
+                  }}
                 >
                   <box orientation={Gtk.Orientation.VERTICAL}>
                     <icon icon={iconForApp(entry.appId)} pixelSize={40} />

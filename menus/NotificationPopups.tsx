@@ -3,6 +3,8 @@ import { bind, Variable, GLib } from "astal";
 import Notifd from "gi://AstalNotifd";
 
 const TIMEOUT_MS = 6000;
+const TICK_MS = 50;
+const MAX_VISIBLE = 5;
 
 function urgencyClass(n: Notifd.Notification): string {
   switch (n.urgency) {
@@ -22,8 +24,20 @@ function NotificationCard({
   notification: Notifd.Notification;
   onClose: () => void;
 }) {
+  const persistent = notification.urgency === Notifd.Urgency.CRITICAL;
+  const progress = Variable(1);
   let timeoutId = 0;
-  if (notification.urgency !== Notifd.Urgency.CRITICAL) {
+  let tickId = 0;
+
+  if (!persistent) {
+    const startMs = GLib.get_monotonic_time() / 1000;
+
+    tickId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, TICK_MS, () => {
+      const elapsed = GLib.get_monotonic_time() / 1000 - startMs;
+      progress.set(Math.max(0, 1 - elapsed / TIMEOUT_MS));
+      return GLib.SOURCE_CONTINUE;
+    });
+
     timeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, TIMEOUT_MS, () => {
       onClose();
       return GLib.SOURCE_REMOVE;
@@ -38,6 +52,7 @@ function NotificationCard({
       setup={(self) => {
         self.connect("destroy", () => {
           if (timeoutId) GLib.source_remove(timeoutId);
+          if (tickId) GLib.source_remove(tickId);
         });
       }}
     >
@@ -75,6 +90,9 @@ function NotificationCard({
           ))}
         </box>
       )}
+      {!persistent && (
+        <levelbar cssClasses={["notif-progress"]} value={bind(progress)} />
+      )}
     </box>
   );
 }
@@ -111,7 +129,7 @@ export default function NotificationPopups(monitor: Gdk.Monitor) {
     >
       <box orientation={Gtk.Orientation.VERTICAL} spacing={8}>
         {bind(active).as((list) =>
-          list.map((n) => (
+          list.slice(-MAX_VISIBLE).map((n) => (
             <NotificationCard notification={n} onClose={() => dismiss(n)} />
           )),
         )}

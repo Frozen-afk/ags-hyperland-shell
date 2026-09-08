@@ -1,6 +1,8 @@
 import { App, Astal, Gtk, Gdk } from "astal/gtk4";
 import { bind, Variable, GLib } from "astal";
-import { readFile, fmtBytes, fmtRate, pct } from "../lib/utils";
+import { bash, readFile, fmtBytes, fmtRate, pct } from "../lib/utils";
+
+const HOT_TEMP_C = 80;
 
 interface CpuSample {
   idle: number;
@@ -46,6 +48,16 @@ function readTemp(): number | null {
   return null;
 }
 
+function readFanRpm(): number | null {
+  // hwmon device numbering varies by board, so glob rather than guess an
+  // index; skip zero readings (fan idle/absent on many laptops at low load).
+  const raw = bash(
+    "cat /sys/class/hwmon/hwmon*/fan1_input 2>/dev/null | grep -v '^0$' | head -1",
+  );
+  const v = parseInt(raw, 10);
+  return isNaN(v) ? null : v;
+}
+
 interface NetSample {
   rx: number;
   tx: number;
@@ -79,6 +91,8 @@ export default function Vitals(monitor: Gdk.Monitor) {
 
   const mem = Variable(readMemInfo()).poll(2000, readMemInfo);
   const temp = Variable(readTemp()).poll(3000, readTemp);
+  const fan = Variable(readFanRpm()).poll(3000, readFanRpm);
+  const isHot = Variable.derive([bind(temp)], (t) => t !== null && t >= HOT_TEMP_C);
 
   const netRates = Variable({ rx: 0, tx: 0 }).poll(1500, () => {
     const cur = readNetSample();
@@ -101,7 +115,7 @@ export default function Vitals(monitor: Gdk.Monitor) {
       marginRight={10}
       application={App}
     >
-      <menubutton cssClasses={["vitals", "bar-pill"]}>
+      <menubutton cssClasses={bind(isHot).as((hot) => ["vitals", "bar-pill", hot ? "vitals-hot" : ""])}>
         <box spacing={6}>
           <icon icon="utilities-system-monitor-symbolic" />
           <label label={bind(cpu).as((c) => `${c}%`)} />
@@ -120,7 +134,20 @@ export default function Vitals(monitor: Gdk.Monitor) {
             </box>
             <box spacing={8} visible={temp.get() !== null}>
               <label label="Temp" cssClasses={["vitals-label"]} widthChars={6} xalign={0} />
-              <label label={bind(temp).as((t) => (t !== null ? `${t}°C` : "N/A"))} hexpand xalign={0} />
+              <label
+                label={bind(temp).as((t) => (t !== null ? `${t}°C` : "N/A"))}
+                cssClasses={bind(isHot).as((hot) => (hot ? ["vitals-hot-text"] : []))}
+                hexpand
+                xalign={0}
+              />
+            </box>
+            <box spacing={8} visible={fan.get() !== null}>
+              <label label="Fan" cssClasses={["vitals-label"]} widthChars={6} xalign={0} />
+              <label
+                label={bind(fan).as((f) => (f !== null ? `${f} RPM` : "N/A"))}
+                hexpand
+                xalign={0}
+              />
             </box>
             <box spacing={8}>
               <label label="Net ↓" cssClasses={["vitals-label"]} widthChars={6} xalign={0} />
