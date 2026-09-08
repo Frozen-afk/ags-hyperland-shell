@@ -10,9 +10,11 @@ import ScreenshotMenu from "./menus/ScreenshotMenu";
 import Vitals from "./overlays/Vitals";
 import DrawToggle from "./overlays/DrawToggle";
 import OSD from "./overlays/OSD";
+import ScreenRecorder from "./overlays/ScreenRecorder";
 import Dock from "./dock/Dock";
 import QuickSettings from "./menus/QuickSettings";
 import WallpaperPicker from "./menus/WallpaperPicker";
+import Overview from "./menus/Overview";
 
 const SCSS = `${GLib.get_user_config_dir()}/ags/style.css`;
 
@@ -38,6 +40,7 @@ App.start({
       Vitals(monitor);
       DrawToggle(monitor);
       Dock(monitor);
+      ScreenRecorder(monitor);
     });
 
     // Single-instance global overlays/modals.
@@ -48,6 +51,7 @@ App.start({
     OSD();
     QuickSettings();
     WallpaperPicker();
+    Overview();
 
     // React to monitors being hot-plugged.
     const display = Gdk.Display.get_default();
