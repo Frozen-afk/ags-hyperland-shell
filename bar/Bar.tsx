@@ -6,6 +6,7 @@ import AudioBrightness from "./AudioBrightness";
 import SystemIndicators from "./SystemIndicators";
 import MediaBar from "./MediaBar";
 import ClockMenu from "./ClockMenu";
+import NotificationBell from "./NotificationBell";
 
 export default function Bar(monitor: Gdk.Monitor, monitorId: number) {
   return (
@@ -35,6 +36,7 @@ export default function Bar(monitor: Gdk.Monitor, monitorId: number) {
           <SysTray />
           <AudioBrightness />
           <SystemIndicators />
+          <NotificationBell />
           <ClockMenu />
         </box>
       </centerbox>

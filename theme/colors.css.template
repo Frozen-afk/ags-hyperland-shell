@@ -1,0 +1,28 @@
+/* matugen template — regenerated on every `matugen image <wallpaper>`.
+   Material You roles are mapped onto the shell's named colors. */
+@define-color bg_solid {{colors.surface.default.hex}};
+@define-color bg rgba({{colors.background.default.red}}, {{colors.background.default.green}}, {{colors.background.default.blue}}, 0.86);
+@define-color bg_popover rgba({{colors.surface_container.default.red}}, {{colors.surface_container.default.green}}, {{colors.surface_container.default.blue}}, 0.94);
+
+@define-color surface {{colors.surface_container_low.default.hex}};
+@define-color surface2 {{colors.surface_container.default.hex}};
+@define-color surface3 {{colors.surface_container_high.default.hex}};
+
+@define-color border rgba({{colors.outline_variant.default.red}}, {{colors.outline_variant.default.green}}, {{colors.outline_variant.default.blue}}, 0.25);
+@define-color border_strong rgba({{colors.outline.default.red}}, {{colors.outline.default.green}}, {{colors.outline.default.blue}}, 0.5);
+
+@define-color fg {{colors.on_background.default.hex}};
+@define-color fg_dim {{colors.on_surface_variant.default.hex}};
+@define-color fg_faint {{colors.outline.default.hex}};
+
+@define-color accent {{colors.primary.default.hex}};
+@define-color accent_fg {{colors.on_primary.default.hex}};
+@define-color accent2 {{colors.tertiary.default.hex}};
+@define-color accent2_fg {{colors.on_tertiary.default.hex}};
+
+@define-color red {{colors.error.default.hex}};
+@define-color green #9ece6a;
+@define-color yellow #e0af68;
+@define-color orange #ff9e64;
+
+@define-color shadow rgba(0, 0, 0, 0.55);

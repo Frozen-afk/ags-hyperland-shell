@@ -1,13 +1,21 @@
 import { App, Astal, Gtk, Gdk } from "astal/gtk4";
 import { GLib } from "astal";
-import { bashAsync } from "../lib/utils";
+import { bashAsync, hasBin } from "../lib/utils";
 
 const WINDOW_NAME = "screenshot-menu";
+const HAS_NOTIFY_SEND = hasBin("notify-send");
 
 function screenshotDir(): string {
   const dir = `${GLib.get_home_dir()}/Pictures/Screenshots`;
   GLib.mkdir_with_parents(dir, 0o755);
   return dir;
+}
+
+function announce(path: string) {
+  if (!HAS_NOTIFY_SEND) return;
+  bashAsync(
+    `notify-send -i "${path}" -a "Screenshot" "Screenshot saved" "${path.replace(GLib.get_home_dir(), "~")}"`,
+  );
 }
 
 function filename(): string {
@@ -23,6 +31,7 @@ async function shootFullscreen() {
   const path = filename();
   await bashAsync(`grim "${path}"`);
   await bashAsync(`wl-copy < "${path}"`);
+  announce(path);
   close();
 }
 
@@ -38,6 +47,7 @@ async function shootRegion(edit: boolean) {
     await bashAsync(`swappy -f "${path}"`);
   } else {
     await bashAsync(`wl-copy < "${path}"`);
+    announce(path);
   }
   close();
 }
@@ -54,6 +64,7 @@ async function shootActiveWindow() {
   }
   await bashAsync(`grim -g "${geometry}" "${path}"`);
   await bashAsync(`wl-copy < "${path}"`);
+  announce(path);
   close();
 }
 

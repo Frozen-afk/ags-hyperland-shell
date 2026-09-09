@@ -1,5 +1,6 @@
 import { bind } from "astal";
-import Hyprland from "gi://AstalHyprland";
+import Hyprland, { Client } from "gi://AstalHyprland";
+import { iconForApp } from "../lib/icons";
 
 const MAX_LEN = 60;
 
@@ -10,21 +11,14 @@ function truncate(s: string): string {
 export default function FocusedClient() {
   const hypr = Hyprland.get_default();
 
-  const title = bind(hypr, "focusedClient").as((client) => {
-    if (!client) return "Desktop";
-    return truncate(client.title || client.class || "Desktop");
-  });
-
-  const visible = bind(hypr, "focusedClient").as((c) => !!c);
-
-  return (
-    <box cssClasses={["focused-client"]} spacing={6} visible={visible}>
-      <icon
-        icon={bind(hypr, "focusedClient").as(
-          (c) => c?.class?.toLowerCase() || "application-x-executable-symbolic",
-        )}
-      />
-      <label label={title} ellipsize={3} maxWidthChars={50} />
+  return bind(hypr, "focusedClient").as((client: Client | null) => (
+    <box
+      cssClasses={["focused-client"]}
+      spacing={6}
+      visible={!!client}
+    >
+      <icon icon={iconForApp(client?.class)} pixelSize={16} />
+      <label label={truncate(client?.title || client?.class || "Desktop")} ellipsize={3} maxWidthChars={50} />
     </box>
-  );
+  ));
 }

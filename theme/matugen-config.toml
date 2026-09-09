@@ -1,0 +1,9 @@
+# matugen config for the AGS shell.
+# Usage (also invoked by menus/WallpaperPicker via lib/theme.ts):
+#   matugen image <wallpaper> --mode dark --config ~/.config/ags/theme/matugen-config.toml
+
+[config]
+
+[templates.colors]
+input_path = '~/.config/ags/theme/colors.css.template'
+output_path = '~/.config/ags/theme/colors.css'

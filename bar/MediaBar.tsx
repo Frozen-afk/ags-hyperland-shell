@@ -1,6 +1,6 @@
 import { bind, Variable } from "astal";
 import { Gtk } from "astal/gtk4";
-import Mpris from "gi://AstalMpris";
+import Mpris, { Mpris as MprisService, Player } from "gi://AstalMpris";
 import { fmtDuration } from "../lib/utils";
 
 const MAX_TITLE = 34;
@@ -9,17 +9,16 @@ function truncate(s: string, n = MAX_TITLE): string {
   return s.length > n ? s.slice(0, n - 1) + "…" : s;
 }
 
-function Player({ player }: { player: Mpris.Player }) {
+function PlayerBox({ player }: { player: Player }) {
   const positionVar = Variable(player.position).poll(1000, () => player.position);
 
   return (
     <box cssClasses={["media-player"]} spacing={8}>
-      <box
+      <icon
         cssClasses={["media-art"]}
         visible={bind(player, "coverArt").as((c) => !!c)}
-        css={bind(player, "coverArt").as(
-          (c) => `background-image: url("${c}");`,
-        )}
+        icon={bind(player, "coverArt")}
+        pixelSize={26}
       />
       <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
         <label
@@ -65,12 +64,12 @@ function Player({ player }: { player: Mpris.Player }) {
 }
 
 export default function MediaBar() {
-  const mpris = Mpris.get_default();
+  const mpris = MprisService.get_default();
 
   return (
     <box cssClasses={["media-bar"]} visible={bind(mpris, "players").as((p) => p.length > 0)}>
       {bind(mpris, "players").as((players) =>
-        players.length > 0 ? <Player player={players[0]} /> : <box />,
+        players.length > 0 ? <PlayerBox player={players[0]} /> : <box />,
       )}
     </box>
   );

@@ -1,8 +1,8 @@
 import { bind, Variable } from "astal";
-import { App, Gtk, Gdk } from "astal/gtk4";
+import { App, Gtk } from "astal/gtk4";
 import Battery from "gi://AstalBattery";
-import Network from "gi://AstalNetwork";
-import Bluetooth from "gi://AstalBluetooth";
+import Network, { Network as NetworkService } from "gi://AstalNetwork";
+import Bluetooth, { Bluetooth as BtService } from "gi://AstalBluetooth";
 import { bash, bashAsync, hasBin, pct } from "../lib/utils";
 import { iconForWifi, iconForBattery } from "../lib/icons";
 
@@ -12,42 +12,46 @@ function BatteryIcon() {
   const bat = Battery.get_default();
   if (!bat.isPresent) return <box />;
 
-  return (
-    <box cssClasses={["indicator", "battery"]} spacing={4}>
-      <icon
-        icon={bind(bat, "percentage").as((p) =>
-          iconForBattery(pct(p), bat.charging),
-        )}
-      />
-      <label label={bind(bat, "percentage").as((p) => `${pct(p)}%`)} />
+  return bind(bat, "percentage").as((p) => (
+    <box
+      cssClasses={["indicator", "battery", pct(p) < 15 ? "low" : ""]}
+      spacing={4}
+    >
+      <icon icon={iconForBattery(pct(p), bat.charging)} />
+      <label label={`${pct(p)}%`} />
     </box>
-  );
+  ));
 }
 
 function NetworkIcon() {
-  const network = Network.get_default();
+  const network = NetworkService.get_default();
 
-  const icon = Variable.derive(
-    [bind(network, "primary"), bind(network, "wifi"), bind(network, "wired")],
-    (primary) => {
-      if (primary === Network.Primary.WIRED) {
-        return "network-wired-symbolic";
-      }
-      const wifi = network.wifi;
-      if (!wifi) return "network-wireless-offline-symbolic";
-      return iconForWifi(wifi.strength ?? 0, wifi.internet === Network.Internet.CONNECTED);
-    },
-  );
-
-  return (
-    <box cssClasses={["indicator", "network"]}>
-      <icon icon={bind(icon)} />
-    </box>
-  );
+  return bind(network, "primary").as((primary) => {
+    if (primary === Network.Primary.WIRED) {
+      return (
+        <box cssClasses={["indicator", "network"]}>
+          <icon icon="network-wired-symbolic" />
+        </box>
+      );
+    }
+    const wifi = network.wifi;
+    if (!wifi) {
+      return (
+        <box cssClasses={["indicator", "network"]}>
+          <icon icon="network-wireless-offline-symbolic" />
+        </box>
+      );
+    }
+    return bind(wifi, "strength").as(() => (
+      <box cssClasses={["indicator", "network"]}>
+        <icon icon={iconForWifi(wifi.strength ?? 0, wifi.internet === Network.Internet.CONNECTED)} />
+      </box>
+    ));
+  });
 }
 
 function BluetoothIcon() {
-  const bt = Bluetooth.get_default();
+  const bt = BtService.get_default();
 
   return (
     <box cssClasses={["indicator", "bluetooth"]}>

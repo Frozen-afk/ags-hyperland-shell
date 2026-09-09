@@ -1,14 +1,13 @@
 import { bind } from "astal";
-import { Gtk, Gdk } from "astal/gtk4";
-import Tray from "gi://AstalTray";
+import { Gtk } from "astal/gtk4";
+import Tray, { TrayItem } from "gi://AstalTray";
 
-function TrayItem({ item }: { item: Tray.TrayItem }) {
+function TrayItemButton({ item }: { item: TrayItem }) {
   return (
     <menubutton
       cssClasses={["tray-item"]}
-      tooltipText={bind(item, "tooltipMarkup").as((t) => t ?? item.title ?? "")}
+      tooltipMarkup={bind(item, "tooltipMarkup").as((t) => t ?? item.title ?? "")}
       menuModel={bind(item, "menuModel")}
-      actionGroup={item.actionGroup ? ["dbusmenu", item.actionGroup] : undefined}
       setup={(self) => {
         // Left click activates (some tray apps expect activation, not a menu).
         const click = new Gtk.GestureClick();
@@ -21,6 +20,14 @@ function TrayItem({ item }: { item: Tray.TrayItem }) {
           }
         });
         self.add_controller(click);
+
+        // Menu actions need the dbusmenu action group inserted into the
+        // widget tree under the prefix the importer names its actions with.
+        const insertGroup = () => {
+          if (item.actionGroup) self.insert_action_group("dbusmenu", item.actionGroup);
+        };
+        insertGroup();
+        item.connect("notify::action-group", insertGroup);
       }}
     >
       <icon gicon={bind(item, "gicon")} pixelSize={16} />
@@ -34,7 +41,7 @@ export default function SysTray() {
   return (
     <box cssClasses={["systray"]} spacing={6}>
       {bind(tray, "items").as((items) =>
-        items.map((item) => <TrayItem item={item} />),
+        items.map((item) => <TrayItemButton item={item} />),
       )}
     </box>
   );

@@ -1,14 +1,9 @@
 import { App, Astal, Gtk, Gdk } from "astal/gtk4";
 import { bind, Variable } from "astal";
-import Hyprland from "gi://AstalHyprland";
+import Hyprland, { Client, Hyprland as HyprlandService } from "gi://AstalHyprland";
 import { iconForApp } from "../lib/icons";
 
 const WINDOW_NAME = "overview";
-
-interface WorkspaceGroup {
-  id: number;
-  clients: Hyprland.Client[];
-}
 
 function close() {
   App.get_window(WINDOW_NAME)?.hide();
@@ -16,11 +11,10 @@ function close() {
 
 function ClientButton({
   client,
-  hypr,
 }: {
-  client: Hyprland.Client;
-  hypr: Hyprland.Hyprland;
+  client: Client;
 }) {
+  const hypr = HyprlandService.get_default();
   return (
     <button
       cssClasses={["overview-client"]}
@@ -40,7 +34,7 @@ function ClientButton({
       }}
     >
       <box spacing={6}>
-        <icon icon={iconForApp(client.class)} pixelSize={20} />
+        <icon icon={iconForApp(client.class)} pixelSize={18} />
         <label
           label={client.title || client.class || "Unknown"}
           maxWidthChars={18}
@@ -52,14 +46,15 @@ function ClientButton({
 }
 
 function WorkspaceCard({
-  group,
-  hypr,
+  id,
+  clients,
   isActive,
 }: {
-  group: WorkspaceGroup;
-  hypr: Hyprland.Hyprland;
+  id: number;
+  clients: Client[];
   isActive: boolean;
 }) {
+  const hypr = HyprlandService.get_default();
   return (
     <box
       orientation={Gtk.Orientation.VERTICAL}
@@ -69,17 +64,20 @@ function WorkspaceCard({
       <button
         cssClasses={["workspace-card-title"]}
         onClicked={() => {
-          hypr.dispatch("workspace", String(group.id));
+          hypr.dispatch("workspace", String(id));
           close();
         }}
       >
-        <label label={`Workspace ${group.id}`} />
+        <box spacing={6}>
+          <label label={`Workspace ${id}`} />
+          <label label={String(clients.length)} cssClasses={["dim"]} />
+        </box>
       </button>
       <box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
-        {group.clients.length === 0 ? (
+        {clients.length === 0 ? (
           <label label="Empty" cssClasses={["dim"]} />
         ) : (
-          group.clients.map((client) => <ClientButton client={client} hypr={hypr} />)
+          clients.map((client) => <ClientButton client={client} />)
         )}
       </box>
     </box>
@@ -87,7 +85,7 @@ function WorkspaceCard({
 }
 
 export default function Overview() {
-  const hypr = Hyprland.get_default();
+  const hypr = HyprlandService.get_default();
 
   // Recompute per-workspace client groups whenever either the workspace
   // list or the global client list changes (AstalHyprland exposes
@@ -95,7 +93,7 @@ export default function Overview() {
   // so we derive the grouping ourselves from the two bindable lists).
   const groups = Variable.derive(
     [bind(hypr, "workspaces"), bind(hypr, "clients"), bind(hypr, "focusedWorkspace")],
-    (workspaces, clients, focused): (WorkspaceGroup & { isActive: boolean })[] =>
+    (workspaces, clients, focused) =>
       [...workspaces]
         .filter((w) => w.id > 0)
         .sort((a, b) => a.id - b.id)
@@ -120,20 +118,30 @@ export default function Overview() {
         if (keyval === Gdk.KEY_Escape || keyval === Gdk.KEY_Tab) close();
       }}
     >
-      <box
-        spacing={24}
-        halign={Gtk.Align.CENTER}
-        valign={Gtk.Align.CENTER}
-        cssClasses={["overview-container"]}
+      <scrollable
+        vscrollbarPolicy={Gtk.PolicyType.NEVER}
+        hexpand
+        cssClasses={["overview-scroll"]}
       >
-        {bind(groups).as((list) =>
-          list.length === 0
-            ? [<label label="No workspaces" cssClasses={["dim"]} />]
-            : list.map((group) => (
-                <WorkspaceCard group={group} hypr={hypr} isActive={group.isActive} />
-              )),
-        )}
-      </box>
+        <box
+          spacing={24}
+          halign={Gtk.Align.CENTER}
+          valign={Gtk.Align.CENTER}
+          cssClasses={["overview-container"]}
+        >
+          {bind(groups).as((list) =>
+            list.length === 0
+              ? [<label label="No workspaces" cssClasses={["dim"]} />]
+              : list.map((group) => (
+                  <WorkspaceCard
+                    id={group.id}
+                    clients={group.clients}
+                    isActive={group.isActive}
+                  />
+                )),
+          )}
+        </box>
+      </scrollable>
     </window>
   );
 }

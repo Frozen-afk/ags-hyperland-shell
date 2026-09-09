@@ -5,6 +5,7 @@ import Bar from "./bar/Bar";
 import Launcher from "./menus/Launcher";
 import Clipboard from "./menus/Clipboard";
 import NotificationPopups from "./menus/NotificationPopups";
+import NotificationCenter from "./menus/NotificationCenter";
 import PowerMenu from "./menus/PowerMenu";
 import ScreenshotMenu from "./menus/ScreenshotMenu";
 import Vitals from "./overlays/Vitals";
@@ -15,6 +16,8 @@ import Dock from "./dock/Dock";
 import QuickSettings from "./menus/QuickSettings";
 import WallpaperPicker from "./menus/WallpaperPicker";
 import Overview from "./menus/Overview";
+import WindowSwitcher, { openSwitcher, advance } from "./menus/WindowSwitcher";
+import { reloadCss } from "./lib/theme";
 
 const SCSS = `${GLib.get_user_config_dir()}/ags/style.css`;
 
@@ -52,6 +55,8 @@ App.start({
     QuickSettings();
     WallpaperPicker();
     Overview();
+    NotificationCenter();
+    WindowSwitcher();
 
     // React to monitors being hot-plugged.
     const display = Gdk.Display.get_default();
@@ -77,6 +82,26 @@ App.start({
         import("./overlays/DrawToggle").then(({ toggleDrawMode }) =>
           toggleDrawMode(),
         );
+        res("ok");
+        return;
+      }
+      case "switcher-next": {
+        advance(1);
+        res("ok");
+        return;
+      }
+      case "switcher-prev": {
+        advance(-1);
+        res("ok");
+        return;
+      }
+      case "switcher-open": {
+        openSwitcher();
+        res("ok");
+        return;
+      }
+      case "reload-css": {
+        reloadCss();
         res("ok");
         return;
       }

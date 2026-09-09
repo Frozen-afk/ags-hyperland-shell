@@ -1,12 +1,14 @@
 import { App, Astal, Gtk, Gdk } from "astal/gtk4";
 import { bind, Variable, GLib } from "astal";
-import Notifd from "gi://AstalNotifd";
+import Notifd, { Notification } from "gi://AstalNotifd";
+import { notifHistory } from "../lib/notifs";
+import { iconForApp } from "../lib/icons";
 
 const TIMEOUT_MS = 6000;
 const TICK_MS = 50;
 const MAX_VISIBLE = 5;
 
-function urgencyClass(n: Notifd.Notification): string {
+function urgencyClass(n: Notification): string {
   switch (n.urgency) {
     case Notifd.Urgency.CRITICAL:
       return "urgency-critical";
@@ -17,11 +19,16 @@ function urgencyClass(n: Notifd.Notification): string {
   }
 }
 
+/**
+ * A single popup card. Closing it only hides the popup — the notification
+ * stays in the history (and keeps the bell badge unread) until it is
+ * dismissed from the notification center.
+ */
 function NotificationCard({
   notification,
   onClose,
 }: {
-  notification: Notifd.Notification;
+  notification: Notification;
   onClose: () => void;
 }) {
   const persistent = notification.urgency === Notifd.Urgency.CRITICAL;
@@ -56,13 +63,19 @@ function NotificationCard({
         });
       }}
     >
-      <box spacing={8}>
+      <box spacing={10}>
         <icon
-          icon={notification.appIcon || notification.desktopEntry || "dialog-information-symbolic"}
-          pixelSize={32}
+          icon={iconForApp(notification.desktopEntry || notification.appIcon)}
+          pixelSize={30}
         />
         <box orientation={Gtk.Orientation.VERTICAL} hexpand valign={Gtk.Align.CENTER}>
-          <label label={notification.summary} xalign={0} cssClasses={["notif-summary"]} ellipsize={3} />
+          <box spacing={6}>
+            <label label={notification.summary} xalign={0} hexpand cssClasses={["notif-summary"]} ellipsize={3} />
+            <label
+              label={GLib.DateTime.new_now_local().format("%H:%M") ?? ""}
+              cssClasses={["notif-time"]}
+            />
+          </box>
           <label
             label={notification.body ?? ""}
             xalign={0}
@@ -75,7 +88,7 @@ function NotificationCard({
           <icon icon="window-close-symbolic" />
         </button>
       </box>
-      {notification.actions.length > 0 && (
+      {notification.actions.length > 0 ? (
         <box spacing={4} cssClasses={["notif-actions"]}>
           {notification.actions.map((action) => (
             <button
@@ -89,8 +102,12 @@ function NotificationCard({
             </button>
           ))}
         </box>
+      ) : (
+        <box visible={false} />
       )}
-      {!persistent && (
+      {persistent ? (
+        <box visible={false} />
+      ) : (
         <levelbar cssClasses={["notif-progress"]} value={bind(progress)} />
       )}
     </box>
@@ -98,20 +115,16 @@ function NotificationCard({
 }
 
 export default function NotificationPopups(monitor: Gdk.Monitor) {
-  const notifd = Notifd.get_default();
-  const active = Variable<Notifd.Notification[]>([]);
+  const notifd = Notifd.Notifd.get_default();
+  const active = Variable<Notification[]>([]);
 
-  notifd.connect("notified", (_src, id) => {
+  notifd.connect("notified", (_src, id: number) => {
+    if (notifd.dontDisturb) return;
     const n = notifd.get_notification(id);
     if (n) active.set([...active.get().filter((x) => x.id !== id), n]);
   });
 
-  notifd.connect("resolved", (_src, id) => {
-    active.set(active.get().filter((n) => n.id !== id));
-  });
-
-  function dismiss(n: Notifd.Notification) {
-    n.dismiss();
+  function dismiss(n: Notification) {
     active.set(active.get().filter((x) => x.id !== n.id));
   }
 
@@ -123,7 +136,7 @@ export default function NotificationPopups(monitor: Gdk.Monitor) {
       exclusivity={Astal.Exclusivity.IGNORE}
       layer={Astal.Layer.OVERLAY}
       anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT}
-      marginTop={10}
+      marginTop={52}
       marginRight={10}
       application={App}
     >

@@ -1,9 +1,21 @@
 {
   "name": "ags-hyprland-shell",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "AGS v2 (Astal) desktop shell for Hyprland on Fedora",
   "type": "module",
-  "dependencies": {
-    "astal": "^0.1.0"
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@girs/gtk-4.0": "^4.7.0",
+    "@girs/gdk-4.0": "^4.7.0",
+    "@girs/glib-2.0": "^2.84.4",
+    "@girs/gio-2.0": "^2.84.4",
+    "@girs/gobject-2.0": "^2.84.4",
+    "@girs/gjs": "^4.0.3"
+  },
+  "comments": {
+    "astal": "The 'astal' JS glue is NOT on npm (the name is squatted). AGS vendors it at runtime; for editor typechecking run: git clone --depth 1 https://github.com/aylur/astal /tmp/astal && cp -r /tmp/astal/lang/gjs ./vendor/astal && npm i --no-save ./vendor/astal"
   }
 }
